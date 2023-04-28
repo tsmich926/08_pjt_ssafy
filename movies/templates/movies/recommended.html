@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <hr>
+  <h1>영화 추천목록</h1>
+  <br>
+  <button id="latest">최신영화</button>
+  <p id="lm"></p>
+  <button id="great">평점이 높은 영화</button>
+  <p id="gm"></p>
+  <button id="popular">인기영화</button>
+  <p id="pm"></p>
+{% endblock %}
+
+{% block script %}
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+  <script>
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const latest = document.querySelector('#latest')
+    const great = document.querySelector('#great')
+    const popular = document.querySelector('#popular')
+
+
+
+    latest.addEventListener("click", function() {
+      axios({
+        method:'get',
+        url:`http://127.0.0.1:8000/movies/latest/`
+
+      })
+      .then((res)=>{
+        //console.log(res.data)
+        const datalist = res.data
+        datalist.forEach((data)=>{
+          console.log(data)
+          const parent = document.querySelector('#latest')
+          const child = document.createElement('p')
+          parent.append(child,data.fields.title)
+
+        })          
+      })
+    })
+
+    great.addEventListener("click", function() {
+      axios({
+        method:'get',
+        url:`http://127.0.0.1:8000/movies/great/`
+      })
+      .then((res)=>{
+        console.log(res.data)
+        const datalist = res.data
+        datalist.forEach((data)=>{
+          console.log(data)
+          const parent = document.querySelector('#great')
+          const child = document.createElement('p')
+          parent.append(child,data.fields.title)
+
+        })    
+      })
+    })
+  
+    popular.addEventListener("click", function() {
+      axios({
+        method:'get',
+        url:`http://127.0.0.1:8000/movies/popular/`
+      })
+      .then((res)=>{
+        console.log(res.data)
+        const datalist = res.data
+        datalist.forEach((data)=>{
+          console.log(data)
+          const parent = document.querySelector('#popular')
+          const child = document.createElement('p')
+          parent.append(child,data.fields.title)
+
+        })    
+      })
+    })
+  
+  </script>
+{% endblock script %}
+
+

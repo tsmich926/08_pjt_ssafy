@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Movies</h1>
+  <hr>
+  {% for movie in movies %}
+  <p>
+    {% comment %} <b>작성자: <a href="{% url 'accounts:profile' movie.user %}">{{movie.user}}</a> {% endcomment %}
+  </p>
+  <p>글번호:{{movie.pk}}</p>
+  <p>제목:{{movie.title}}</p>
+  <p>개봉일:{{movie.release_date}}</p>
+  <p>평점:{{movie.vote_average}}</p>
+  <p>줄거리:{{movie.overview}}</p>
+  <hr>
+  {% endfor %}
+{% endblock %}

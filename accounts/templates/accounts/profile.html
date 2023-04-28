@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>{{ person.username }}의 프로필 페이지</h1>
+  {% with followings=person.followings.all followers=person.followers.all %}
+    <div>
+      <div>
+        팔로잉 : <span id="followings-cnt">{{ person.followings.all|length }}</span>
+        팔로워 : <span id="followers-cnt" >{{ person.followers.all|length }}</span>
+      </div>
+      {% if user != person %}
+        <div>
+          <form id="follow-form" data-user-id="{{person.pk}}">
+            {% csrf_token %}
+            {% if user in followers %}
+              <input type="submit" id="follow-input" value="언팔">
+            {% else %}
+              <input type="submit" id="follow-input" value="팔로우">
+            {% endif %}
+          </form>
+        </div>
+      {% endif %}
+    </div>
+  {% endwith %}
+{% endblock %}
+
+{% block script %}
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    const form = document.querySelector('#follow-form')
+    console.log(form)
+    
+    form.addEventListener('submit',function(event){
+      event.preventDefault()
+      console.log(event)
+      
+      const userId = event.target.dataset.userId
+      const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
+      
+      axios({
+        method:'post',
+        url:`/accounts/${userId}/follow/`,
+        headers: {'X-CSRFToken': csrftoken}
+      })
+      .then((res)=>{
+        console.log(res.data)
+        const isFollowed =res.data.is_followed
+        const following = res.data.followings_cnt
+        const followers = res.data.followers_cnt
+
+        const followesBtn = document.querySelector('#follow-input')
+        const followersCntTag = document.querySelector('#followers-cnt')
+        const followingsCntTag = document.querySelector('#followings-cnt')
+
+        if (isFollowed === true) {
+          followesBtn.value ='언팔'
+        } else {
+          followesBtn.value ='팔로우'
+        }
+        followersCntTag.innerText = res.data.followers_cnt
+        followingsCntTag.innerText = res.data.followings_cnt
+      })
+    })
+  </script>
+
+{% endblock script %}
+
